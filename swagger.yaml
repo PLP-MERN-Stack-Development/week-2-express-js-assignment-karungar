@@ -1,0 +1,123 @@
+openapi: 3.0.0
+info:
+  title: Product API
+  version: 1.0.0
+  description: A RESTful API for managing products
+servers:
+  - url: http://localhost:3000
+    description: Development server
+paths:
+  /:
+    get:
+      summary: Welcome message
+      responses:
+        '200':
+          description: Welcome message
+          content:
+            text/plain:
+              example: Welcome to the Product API!
+
+  /api/products:
+    get:
+      summary: Get all products with filtering and pagination
+      parameters:
+        - name: category
+          in: query
+          schema:
+            type: string
+          description: Filter by category
+        - name: inStock
+          in: query
+          schema:
+            type: boolean
+          description: Filter by in-stock status
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+          description: Page number
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+          description: Items per page
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total:
+                    type: integer
+                  page:
+                    type: integer
+                  pages:
+                    type: integer
+                  limit:
+                    type: integer
+                  products:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Product'
+
+  # Add other endpoints similarly...
+  
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        category:
+          type: string
+        inStock:
+          type: boolean
+      example:
+        id: "1"
+        name: "Laptop"
+        description: "High-performance laptop"
+        price: 1200
+        category: "electronics"
+        inStock: true
+
+    ProductInput:
+      type: object
+      required:
+        - name
+        - description
+        - price
+        - category
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: number
+        category:
+          type: string
+        inStock:
+          type: boolean
+      example:
+        name: "Smartphone"
+        description: "Latest model"
+        price: 800
+        category: "electronics"
+        inStock: true
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: x-api-key
